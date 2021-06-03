@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css'>
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js"
+        integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div id="app">
+        <header class="p-5">
+            <section class="d-flex align-items-center justify-content-between">
+                <a href="index.html"><img src="assets/images/logo_01.svg" alt=""></a>
+                <a href="#" class="h1 text-dark" @click="checkChart" data-bs-toggle="modal"
+                    data-bs-target="#staticBackdrop"><i class="fas fa-shopping-cart">{{ data.chartNum
+                        }}</i></a>
+            </section>
+        </header>
+        <main class="container">
+            <section>
+                <div class="card-group">
+                    <div class="card border-0 mx-2" v-for="item in products" :key="item.id">
+                        <img :src="item.imageUrl" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ item.title }}</h5>
+                            <p class="card-text">${{ item.price }}</p>
+                            <p class="card-text">{{ item.description }}</p>
+                        </div>
+                        <div class="">
+                            <button type="button" class="btn btn-outline-dark d-block w-100"
+                                @click="addChart(item)">加入購物車</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <!-- Modal-chart -->
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">購物車</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div>
+                        <table class="table mt-4">
+                            <thead>
+                                <tr>
+                                    <th>名稱</th>
+                                    <th width="120">
+                                        售價
+                                    </th>
+                                    <th width="100">
+                                        數量
+                                    </th>
+                                    <th width="100">
+                                        總價
+                                    </th>
+                                    <th width="100">
+                                        刪除
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template v-for="item in chartList" :key="item.id">
+                                    <tr>
+                                        <td>{{ item.title }}</td>
+                                        <td>{{ item.price }}</td>
+                                        <td>{{ item.num }}</td>
+                                        <td>{{ item.num * item.price }}</td>
+                                        <td><button type="button" class="btn btn-outline-danger">刪除</button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">繼續購物</button>
+                        <button type="button" class="btn btn-primary" @click="totals" data-bs-dismiss="modal"
+                            data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+                            aria-controls="offcanvasRight">結帳</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- modal-pay -->
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+            <div class="offcanvas-header">
+                <h5 id="offcanvasRightLabel">總共金額：${{ customer.total }}元</h5>
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                    aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div>
+                    <form>
+                        <div class="row mb-5">
+                            <div class="mb-3 col-6">
+                                <label for="name" class="form-label">姓名</label>
+                                <input type="text" class="form-control" id="name" v-model="customer.name">
+                            </div>
+                            <div class="mb-3 col-6">
+                                <label for="phone" class="form-label">電話</label>
+                                <input type="number" class="form-control" id="phone" v-model.number="customer.phone">
+                            </div>
+                            <div class="mb-3">
+                                <label for="address" class="form-label">收件地址</label>
+                                <input type="text" class="form-control" id="address" v-model="customer.address">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" v-model="customer.email">
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column align-items-center">
+                            <div class="mb-3">
+                                <button type="button" class="btn btn-outline-primary" @click="payCheck(1)">信用卡刷卡</button>
+                            </div>
+                            <div class="mb-3">
+                                <button type="button" class="btn btn-outline-secondary" @click="payCheck(21)">線上轉帳</button>
+                            </div>
+                            <div class="mb-3">
+                                <button type="button" class="btn btn-outline-success" @click="payCheck(3)">超商帳單代收</button>
+                            </div>
+                            <div class="mb-3">
+                                <button type="button" class="btn btn-outline-danger" @click="payCheck(4)">7-11 ibon</button>
+                            </div>
+                            <div class="mb-3">
+                                <button type="button" class="btn btn-outline-warning" @click="payCheck(6)">FamiPort</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/all.js" type="module"></script>
+</body>
+
+</html>
