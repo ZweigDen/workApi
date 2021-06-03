@@ -60,7 +60,7 @@ const app = createApp({
                 od_sob: "123456",
                 invoice_name: "訊航科技股份有限公司",
                 invoice_num: "80129529",
-                roturl: "https://zweigden.github.io/teachWeb/"
+                roturl: "https://zweigden.github.io/workApi/index.html"
             },
             invoice: {
 
